@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MatiereRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: MatiereRepository::class)]
 class Matiere
@@ -16,11 +18,13 @@ class Matiere
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $nom = null;
 
-        /**
-     * @ORM\ManyToOne(targetEntity=Professeur::class, inversedBy="matieres")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Professeur::class, inversedBy: "matieres")]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Professeur $professeur = null;
+
+    #[ORM\ManyToMany(targetEntity: Stage::class, inversedBy: "matieres")]
+    #[ORM\JoinTable(name: "matiere_stage")] // Table de jointure
+    private Collection $stages;
 
     public function getId(): ?int
     {

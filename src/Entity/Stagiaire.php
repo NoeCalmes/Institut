@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\StagiaireRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: StagiaireRepository::class)]
 class Stagiaire
@@ -23,8 +25,16 @@ class Stagiaire
     private ?string $email = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $Datenaissance = null;
-    private Collection $stages;
+    private ?\DateTimeInterface $datenaissance = null;
+
+     #[ORM\ManyToMany(targetEntity: Stage::class, inversedBy: "stagiaires")]
+     #[ORM\JoinTable(name: "stagiaire_stage")] // Table de jointure
+     private Collection $stages;
+
+     public function __construct()
+     {
+         $this->stages = new ArrayCollection();
+     }
 
     public function getId(): ?int
     {
@@ -67,22 +77,16 @@ class Stagiaire
         return $this;
     }
 
-    public function getDatenaissance(): ?float
+    public function getDatenaissance(): ?\DateTimeInterface
     {
-        return $this->Datenaissance;
+        return $this->datenaissance;
     }
 
-    public function setDatenaissance(?float $Datenaissance): static
+    public function setDatenaissance(\DateTimeInterface $datenaissance): self
     {
-        $this->Datenaissance = $Datenaissance;
-
+        $this->datenaissance = $datenaissance;
         return $this;
     }
-    
-    public function __construct()
-{
-    $this->stages = new ArrayCollection();
-}
 
 public function getStages(): Collection
 {

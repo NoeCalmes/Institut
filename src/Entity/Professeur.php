@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ProfesseurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ProfesseurRepository::class)]
 class Professeur
@@ -19,14 +21,13 @@ class Professeur
     #[ORM\Column(length: 120, nullable: true)]
     private ?string $email = null;
 
-     /**
-     * @ORM\OneToMany(targetEntity=Matiere::class, mappedBy="professeur")
-     */
+    #[ORM\OneToMany(mappedBy: "professeur", targetEntity: Matiere::class)]
     private Collection $matieres;
 
     public function __construct()
     {
         $this->matieres = new ArrayCollection();
+        
     }
 
     public function getId(): ?int

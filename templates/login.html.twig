@@ -1,0 +1,69 @@
+{# templates/security/login.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Se connecter{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <h2 class="text-center mb-4">Se connecter</h2>
+
+        {# Afficher un message d'erreur si besoin #}
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form action="{{ path('app_login') }}" method="post" class="card p-3 shadow-sm">
+            <div class="mb-3">
+                <label for="login" class="form-label">Nom d'utilisateur</label>
+                <input 
+                    type="text"
+                    id="login"
+                    name="_username"
+                    class="form-control"
+                    placeholder="Votre identifiant"
+                    required
+                    autofocus
+                />
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="_password"
+                    class="form-control"
+                    placeholder="Votre mot de passe"
+                    required
+                />
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">
+                    Se connecter
+                </button>
+            </div>
+        </form>
+
+        {# Informations des comptes de test #}
+        <div class="mt-4">
+            <h5>Comptes de test :</h5>
+            <p><strong>Compte Professeur :</strong><br>
+                <span class="fw-bold">Login :</span> HarounaKANE<br>
+                <span class="fw-bold">Mot de passe :</span> noecalmes
+            </p>
+            <p><strong>Compte Administrateur :</strong><br>
+                <span class="fw-bold">Login :</span> noecalmes<br>
+                <span class="fw-bold">Mot de passe :</span> noecalmes
+            </p>
+            <p class="text-muted">
+                *(Les mots de passe sont hashés dans la base de données.)*
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

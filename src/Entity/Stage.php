@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\StageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: StageRepository::class)]
 class Stage
@@ -18,20 +20,18 @@ class Stage
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $Date = null;
+    private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Stagiaire::class, mappedBy="stages")
-     */
+    #[ORM\ManyToMany(targetEntity: Stagiaire::class, mappedBy: "stages")]
     private Collection $stagiaires;
-
+    private Collection $matieres;
     public function __construct()
     {
         $this->stagiaires = new ArrayCollection();
-        $this->matieres = new ArrayCollection(); 
+        $this->matieres = new ArrayCollection();
     }
 
 
@@ -80,13 +80,13 @@ public function getStagiaires(): Collection
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->Date;
+        return $this->date;
     }
 
-    public function setDate(?\DateTimeInterface $Date): static
+    public function setDate(?\DateTimeInterface $date): static
     {
-        $this->Date = $Date;
-
+        $this->date = $date;
+    
         return $this;
     }
 
