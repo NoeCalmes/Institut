@@ -22,8 +22,7 @@ class Matiere
     #[ORM\JoinColumn(nullable: false)]
     private ?Professeur $professeur = null;
 
-    #[ORM\ManyToMany(targetEntity: Stage::class, inversedBy: "matieres")]
-    #[ORM\JoinTable(name: "matiere_stage")] // Table de jointure
+    #[ORM\ManyToMany(targetEntity: Stage::class, mappedBy: "matieres")]
     private Collection $stages;
 
     public function getId(): ?int

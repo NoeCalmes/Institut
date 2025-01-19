@@ -27,6 +27,9 @@ class Stage
 
     #[ORM\ManyToMany(targetEntity: Stagiaire::class, mappedBy: "stages")]
     private Collection $stagiaires;
+    
+    #[ORM\ManyToMany(targetEntity: Matiere::class, inversedBy: "stages")]
+    #[ORM\JoinTable(name: "matiere_stage")]
     private Collection $matieres;
     public function __construct()
     {

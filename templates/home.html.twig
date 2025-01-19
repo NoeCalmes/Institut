@@ -1,99 +1,109 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
-<h1>Bienvenue sur la page d'accueil</h1>
+    <h1>Bienvenue sur la page d'accueil</h1>
 
-{% if app.user %}
-    <p>Bonjour {{ app.user.login }} !Vous êtes connecté avec le rôle :
-        {{ app.user.role }} </p>
-{% else %}
-    <p>Visiteur non connecté</p>
-{% endif %}
-<div class="container">
-    <h1>Liste des stages</h1>
-
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('stage_new') }}" class="btn btn-success mb-3">
-            Ajouter un stage
-        </a>
+    {% if app.user %}
+        <p>Bonjour {{ app.user.login }} ! Vous êtes connecté avec le rôle : {{ app.user.role }}</p>
+    {% else %}
+        <p>Visiteur non connecté</p>
     {% endif %}
 
-    {% if stages is empty %}
-        <p>Aucun stage disponible pour le moment.</p>
-    {% else %}
-        <div class="row">
-            {% for stage in stages %}
-                <div class="col-md-4 mb-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h4 class="card-title">{{ stage.titre }}</h4>
-                            <h6 class="card-subtitle text-muted">
-                                {{ stage.date|date('d/m/Y H:i') }}
-                            </h6>
-                            <p class="card-text mt-2">
-                                {{ stage.description }}
-                            </p>
+    <div class="container">
+        <h1>Liste des Stages</h1>
 
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('stage_edit', {id: stage.id}) }}"
-                                   class="btn btn-warning">
-                                    Modifier
-                                </a>
-                                <a href="{{ path('stage_delete', {id: stage.id}) }}"
-                                   class="btn btn-danger"
-                                   onclick="return confirm('Voulez-vous vraiment supprimer ce stage ?');">
-                                    Supprimer
-                                </a>
-                            {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('stage_new') }}" class="btn btn-success mb-3">
+                Ajouter un Stage
+            </a>
+        {% endif %}
+
+        {% if stages is empty %}
+            <p>Aucun Stage disponible pour le moment.</p>
+        {% else %}
+            <div class="row">
+                {% for stage in stages %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h4 class="card-title">{{ stage.titre }}</h4>
+                                <h6 class="card-subtitle text-muted">
+                                    {{ stage.date|date('d/m/Y H:i') }}
+                                </h6>
+                                <p class="card-text mt-2">
+                                    {{ stage.description }}
+                                </p>
+                                <p><strong>Matières :</strong>
+                                    {% if stage.matieres is empty %}
+                                        Aucune matière associée.
+                                    {% else %}
+                                        <ul>
+                                            {% for matiere in stage.matieres %}
+                                                <li>{{ matiere.nom }} (Professeur : {{ matiere.professeur.nom }})</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </p>
+
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('stage_edit', {id: stage.id}) }}" class="btn btn-warning">
+                                        Modifier
+                                    </a>
+                                    <a href="{{ path('stage_assign_matieres', {id: stage.id}) }}" class="btn btn-info">
+                                        Assigner Matières
+                                    </a>
+                                    <form method="post" action="{{ path('stage_delete', {id: stage.id}) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce stage ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stage.id) }}">
+                                        <button class="btn btn-danger">Supprimer</button>
+                                    </form>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    {# AJOUTER LA LISTE DES PROFESSEURS ICI #}
+        <hr>  {# séparation visuelle #}
 
-    <hr>  {# séparation visuelle #}
-    {% if is_granted('ROLE_ADMIN') %}
-    <h1>Liste des Professeurs</h1>
-        <a href="{{ path('professeur_new') }}" class="btn btn-success mb-3">
-            Ajouter un Professeur
-        </a>
+        {% if is_granted('ROLE_ADMIN') %}
+            <h1>Liste des Professeurs</h1>
+            <a href="{{ path('professeur_new') }}" class="btn btn-success mb-3">
+                Ajouter un Professeur
+            </a>
 
-    {% if professeurs is empty %}
-        <p>Aucun professeur enregistré.</p>
-    {% else %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for prof in professeurs %}
-                <tr>
-                    <td>{{ prof.nom }}</td>
-                    <td>{{ prof.email }}</td>
-                    <td>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('professeur_edit', {id: prof.id}) }}"
-                               class="btn btn-warning">
-                                Modifier
-                            </a>
-                            <a href="{{ path('professeur_delete', {id: prof.id}) }}"
-                               class="btn btn-danger"
-                               onclick="return confirm('Voulez-vous vraiment supprimer ce professeur ?');">
-                               Supprimer
-                            </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-</div>
-    {% endif %}
+            {% if professeurs is empty %}
+                <p>Aucun Professeur enregistré.</p>
+            {% else %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for prof in professeurs %}
+                        <tr>
+                            <td>{{ prof.nom }}</td>
+                            <td>{{ prof.email }}</td>
+                            <td>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('professeur_edit', {id: prof.id}) }}" class="btn btn-warning">
+                                        Modifier
+                                    </a>
+                                    <form method="post" action="{{ path('professeur_delete', {id: prof.id}) }}" style="display:inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce professeur ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ prof.id) }}">
+                                        <button class="btn btn-danger">Supprimer</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endif %}
+    </div>
 {% endblock %}
